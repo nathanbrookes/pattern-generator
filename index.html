@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pattern Generator</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 x2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27%23ff4d5e%27/%3E%3Cstop offset=%27.33%27 stop-color=%27%23f4ef4c%27/%3E%3Cstop offset=%27.66%27 stop-color=%27%2352d3ff%27/%3E%3Cstop offset=%271%27 stop-color=%27%23c160ff%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27url(%23g)%27/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <header class="brand">
+        <div class="brand-mark"></div>
+        <div class="brand-text"><b>PATTERN</b><span>GEN</span></div>
+        <button id="btn-hide" class="icon-btn" title="Hide panels (H)">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+        </button>
+      </header>
+
+      <section class="block">
+        <div class="block-title">Patterns</div>
+        <div id="picker" class="picker"></div>
+      </section>
+
+      <section class="block" id="presets-block">
+        <div class="block-title">Presets</div>
+        <div id="presets" class="chips"></div>
+      </section>
+
+      <details class="panel" id="panel-pattern" open>
+        <summary><span class="sum-title">Pattern</span><span class="sum-sub">settings</span></summary>
+        <div class="panel-body" id="ctl-pattern"></div>
+      </details>
+      <details class="panel" id="panel-transform">
+        <summary><span class="sum-title">Perspective &amp; Warp</span><span class="sum-sub">any pattern</span></summary>
+        <div class="panel-body" id="ctl-transform"></div>
+      </details>
+      <details class="panel" id="panel-post">
+        <summary><span class="sum-title">Pixelate &amp; Color FX</span><span class="sum-sub">any pattern</span></summary>
+        <div class="panel-body" id="ctl-post"></div>
+      </details>
+      <details class="panel" id="panel-mine" open>
+        <summary><span class="sum-title">My Presets</span><span class="sum-sub" id="mine-count">save your own</span></summary>
+        <div class="panel-body" id="ctl-mine"></div>
+      </details>
+      <details class="panel" id="panel-export">
+        <summary><span class="sum-title">Export</span><span class="sum-sub">PNG · JPEG · DPI · video</span></summary>
+        <div class="panel-body" id="ctl-export"></div>
+      </details>
+    </aside>
+
+    <main id="stage">
+      <div id="toolbar">
+        <div class="tb-group">
+          <button id="btn-random" class="tb-btn accent" title="Randomize pattern settings (R)">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>
+            <span>Randomize</span>
+          </button>
+          <button id="btn-random-all" class="tb-btn" title="Randomize everything — pattern, perspective, warp and effects (Shift+R)">All</button>
+        </div>
+        <div class="tb-group">
+          <label class="tb-label" for="seed">Seed</label>
+          <input id="seed" class="tb-num" type="number" min="0" max="999999" title="Seed — changes the random layout">
+          <button id="btn-reseed" class="tb-btn icon" title="New seed">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
+          </button>
+        </div>
+        <div class="tb-group">
+          <button id="btn-play" class="tb-btn icon" title="Animate (Space)"></button>
+          <button id="btn-rewind" class="tb-btn icon" title="Rewind animation to the start">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 5v14M18 6l-9 6 9 6z"/></svg>
+          </button>
+          <label class="tb-mini" title="Animation speed (double-click: 1×)">Speed<input id="speed" class="tb-range" type="range" min="0" max="3" step="0.01"><span id="speed-val" class="tb-val"></span></label>
+          <label class="tb-mini" title="Spin: rotation while animating (double-click: stop)">Spin<input id="spin" class="tb-range" type="range" min="-180" max="180" step="1"><span id="spin-val" class="tb-val"></span></label>
+        </div>
+        <div class="tb-group">
+          <button id="btn-undo" class="tb-btn icon" title="Undo (⌘Z)">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>
+          </button>
+          <button id="btn-redo" class="tb-btn icon" title="Redo (⇧⌘Z)">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg>
+          </button>
+          <button id="btn-reset" class="tb-btn" title="Reset all settings for this pattern (⌘Z to undo)">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+            <span class="lbl">Reset</span>
+          </button>
+          <button id="btn-resetview" class="tb-btn icon" title="Reset view (0 or double-click)">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+          </button>
+          <select id="res-select" class="tb-select" title="Preview resolution">
+            <option value="auto">Auto res</option>
+            <option value="0.5">0.5×</option>
+            <option value="1">1×</option>
+            <option value="2">2×</option>
+          </select>
+        </div>
+        <div class="tb-spacer"></div>
+        <div class="tb-group">
+          <button id="btn-upload" class="tb-btn" title="Upload an image to make your own pattern (PNG, JPEG, TIFF, WebP, GIF, SVG)">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+            <span class="lbl">Upload image</span>
+          </button>
+          <button id="btn-save" class="tb-btn" title="Save these settings as your own preset (⌘S)">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>
+            <span class="lbl">Save preset</span>
+          </button>
+          <button id="btn-link" class="tb-btn" title="Copy a link to this exact pattern">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>
+            <span class="lbl">Copy link</span>
+          </button>
+          <button id="btn-png" class="tb-btn primary" title="Download image (size, DPI and format in the Export panel)">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>
+            <span>Export</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="viewport"><canvas id="view"></canvas></div>
+      <div id="upload-card" hidden>
+        <button type="button" class="uc-x" title="Hide">×</button>
+        <div class="uc-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg></div>
+        <div class="uc-text"><b>Make your own pattern</b><span>Upload a tile — PNG, JPEG, TIFF, WebP, GIF or SVG. Or drag &amp; drop / paste an image onto the canvas.</span></div>
+        <button type="button" class="btn primary uc-btn">Upload image…</button>
+      </div>
+      <input id="file-upload" type="file" accept="image/*,.tif,.tiff,.png,.jpg,.jpeg,.webp,.gif,.bmp,.svg" hidden>
+      <div id="hint">Drag to pan · Scroll to zoom · <b>Shift</b>-drag to tilt · <b>Alt</b>-drag to rotate · Double-click to reset</div>
+      <div id="status"></div>
+      <div id="pg-errors" hidden><button class="err-x" title="Dismiss">×</button><pre class="err-body"></pre></div>
+      <div id="toast"></div>
+    </main>
+  </div>
+
+  <script src="js/core/pg.js"></script>
+  <script src="js/core/palettes.js"></script>
+  <script src="js/core/schemas.js"></script>
+  <script src="js/core/glsl.js"></script>
+  <script src="js/core/renderer.js"></script>
+  <script src="js/lib/tiff.js"></script>
+  <script src="js/core/images.js"></script>
+  <script src="js/core/video.js"></script>
+  <script src="js/core/ui.js"></script>
+  <script src="js/core/app.js"></script>
+  <script src="js/manifest.js"></script>
+</body>
+</html>

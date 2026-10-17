@@ -1,0 +1,8 @@
+# Only the live site is published (GitHub Pages): index.html, css/, js/
+/*
+!/index.html
+!/css/
+!/js/
+!/.gitignore
+!/.nojekyll
+.DS_Store

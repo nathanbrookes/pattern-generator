@@ -26,6 +26,7 @@ PG.patternFiles = [
   'js/patterns/voronoi.js',
   'js/patterns/contour.js',
   'js/patterns/textile.js',
+  'js/patterns/aura.js',
   'js/patterns/marble.js',
   'js/patterns/guilloche.js',
   'js/patterns/opart.js',

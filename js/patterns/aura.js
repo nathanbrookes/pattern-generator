@@ -62,7 +62,7 @@
         default: 'blob',
         random: ['blob', 'blob', 'pair', 'pair', 'cluster', 'field', 'rings'],
       },
-      { id: 'size', label: 'Size', min: 0.15, max: 3, default: 0.85, step: 0.01, scale: 'log', random: [0.6, 1.05], help: 'Blob half-height (field: feature scale)' },
+      { id: 'size', label: 'Size', min: 0.15, max: 3, default: 0.95, step: 0.01, scale: 'log', random: [0.75, 1.1], showIf: (v) => v.repeat === 'off' || v.shape === 'field' || v.shape === 'cluster', help: 'Blob half-height (field: feature scale)' },
       { id: 'stretch', label: 'Stretch', min: 0.3, max: 3, default: 0.8, step: 0.01, scale: 'log', random: [0.6, 1.35], showIf: notField, help: 'Width ÷ height' },
       { id: 'squareness', label: 'Squareness', min: 0, max: 1, default: 0.35, step: 0.01, random: [0, 0.7], showIf: shapeIs('blob', 'pair', 'rings'), help: 'Ellipse → rounded square' },
       { id: 'angle', label: 'Angle', min: -90, max: 90, default: 0, step: 1, unit: '°', random: [-35, 35], showIf: notField },
@@ -75,6 +75,12 @@
       { id: 'uneven', label: 'Uneven bands', min: 0, max: 1, default: 0.5, step: 0.01, random: [0.25, 0.8], showIf: (v) => v.shape !== 'rings', help: 'Band widths vary around the blob: broad bands next to thin, vanishing ones' },
       { id: 'cx', label: 'Centre X', min: -1.5, max: 1.5, default: 0, step: 0.01, random: [-0.15, 0.15] },
       { id: 'cy', label: 'Centre Y', min: -1.5, max: 1.5, default: 0, step: 0.01, random: [-0.15, 0.15] },
+
+      { type: 'heading', label: 'Repeat' },
+      { id: 'repeat', label: 'Repeat', type: 'select', options: [['off', 'Off'], ['grid', 'Grid'], ['brick', 'Brick']], default: 'off', random: ['off', 'off', 'grid', 'brick'], showIf: (v) => v.shape !== 'field' && v.shape !== 'cluster', help: 'Fill the screen with several auras — neighbours melt together where their halos meet' },
+      { id: 'copies', label: 'Copies across', min: 1.2, max: 10, default: 3, step: 0.1, random: [2, 4.5], showIf: (v) => v.repeat !== 'off' && v.shape !== 'field' && v.shape !== 'cluster', help: 'How many auras fit across the shorter side of the screen' },
+      { id: 'spacing', label: 'Spacing', min: 0.75, max: 3, default: 1.1, step: 0.01, random: [0.9, 1.4], showIf: (v) => v.repeat !== 'off' && v.shape !== 'field' && v.shape !== 'cluster', help: 'Room around each aura (1 = touching; smaller = they merge)' },
+      { id: 'variety', label: 'Variety', min: 0, max: 1, default: 0.6, step: 0.01, random: [0.3, 0.9], showIf: (v) => v.repeat !== 'off' && v.shape !== 'field' && v.shape !== 'cluster', help: 'How different each copy is: shape, size, tilt, timing and colors' },
 
       { type: 'heading', label: 'Color' },
       { id: 'gradient', label: 'Gradient', type: 'gradient', default: IONIZED, help: 'Edge → core. The first stop is the halo next to the background' },
@@ -100,7 +106,7 @@
       {
         name: 'Ionized', thumb: true, play: true,
         values: {
-          shape: 'blob', size: 0.9, stretch: 0.74, squareness: 0.35, angle: -12, lumps: 0.4, inner: 0.85, uneven: 0.7, cx: 0, cy: -0.02,
+          shape: 'blob', size: 0.97, stretch: 0.74, squareness: 0.35, angle: -12, lumps: 0.4, inner: 0.85, uneven: 0.7, cx: 0, cy: -0.02,
           gradient: IONIZED, bg: '#dbc3e2', bands: 1, softness: 0.4, fringe: 0.35, glow: 0.3, drift: 0.35, hueShift: 70, grain: 0.3,
         },
       },
@@ -114,7 +120,7 @@
       {
         name: 'Cream Aura', play: true,
         values: {
-          shape: 'pair', size: 0.92, stretch: 0.8, squareness: 0.15, angle: 0, lumps: 0.3, inner: 0.2, cx: 0.14, cy: 0.3,
+          shape: 'pair', size: 0.98, stretch: 0.8, squareness: 0.15, angle: 0, lumps: 0.3, inner: 0.2, cx: 0.14, cy: 0.3,
           satSize: 0.5, satAngle: -128, satDist: 1.12, accent: NAVY, accentMix: 1,
           gradient: CREAM, bg: '#efe8db', bands: 1, softness: 0.6, fringe: 0.2, glow: 0.2, drift: 0.3, grain: 0.3,
         },
@@ -122,14 +128,14 @@
       {
         name: 'Orange Flare', play: true,
         values: {
-          shape: 'blob', size: 1.05, stretch: 0.95, squareness: 0.6, angle: 6, lumps: 0.7, inner: 1, cx: 0.04, cy: 0.12,
+          shape: 'blob', size: 1.12, stretch: 0.95, squareness: 0.6, angle: 6, lumps: 0.7, inner: 1, cx: 0.04, cy: 0.12,
           gradient: ORANGE, bg: '#c94a1e', bands: 0.8, softness: 0.45, fringe: 0.25, glow: 0.3, drift: 0.5, grain: 0.3,
         },
       },
       {
         name: 'Thermal', play: true,
         values: {
-          shape: 'cluster', count: 5, size: 1.05, stretch: 1.15, lumps: 0.5, inner: 0.6, accentMix: 0,
+          shape: 'cluster', count: 5, size: 1.12, stretch: 1.15, lumps: 0.5, inner: 0.6, accentMix: 0,
           gradient: THERMAL, bg: '#140828', bands: 1, softness: 0.55, fringe: 0.25, glow: 0.45, drift: 0.4, grain: 0.35, vignette: 0.3,
         },
       },
@@ -141,9 +147,16 @@
         },
       },
       {
+        name: 'Ionized Wallpaper', play: true,
+        values: {
+          shape: 'blob', repeat: 'brick', copies: 3.2, spacing: 1.0, variety: 0.7, stretch: 0.8, squareness: 0.4, angle: -8, lumps: 0.45, inner: 0.8, uneven: 0.6,
+          gradient: IONIZED, bg: '#dbc3e2', bands: 1, softness: 0.4, fringe: 0.35, glow: 0.3, drift: 0.35, hueShift: 70, grain: 0.3,
+        },
+      },
+      {
         name: 'Chrome Bubble', play: true,
         values: {
-          shape: 'rings', size: 0.9, stretch: 0.9, squareness: 0.25, angle: -15, lumps: 0.6, inner: 0.45,
+          shape: 'rings', size: 0.97, stretch: 0.9, squareness: 0.25, angle: -15, lumps: 0.6, inner: 0.45,
           gradient: CHROME, bg: '#c4cee2', bands: 1.4, softness: 0.7, fringe: 0.5, glow: 0.3, drift: 0.4, grain: 0.25,
         },
       },
@@ -154,7 +167,9 @@ float au_C = 0.0;     // colour-drift phase (radians), same rule
 float au_acc = 0.0;   // weight of the satellite gradient at this sample
 float au_hw = 0.1;    // halo fade width (gradient units)
 
-vec2 auCirc(float k, float ph) { return vec2(cos(k * au_T + ph), sin(k * au_T + ph)); }
+float au_ph = 0.0;          // per-copy morph phase offset (Repeat)
+vec2 au_so = vec2(0.0);     // per-copy noise offset (Repeat) — gives each copy its own outline and interior
+vec2 auCirc(float k, float ph) { float a = k * (au_T + au_ph) + ph; return vec2(cos(a), sin(a)); }
 
 // Low-frequency organic displacement (blob units) that morphs on a loop: the noise domain travels round circles.
 vec2 auWarp(vec2 q) {
@@ -206,31 +221,24 @@ void auAdd(float L, float acc) {
   au_sw += e; au_sa += e * acc;
 }
 
-vec4 pattern(vec2 p) {
-  float S = u_size;
-  au_T = u_time * u_morph * PG_TAU / 10.0;
-  au_C = u_time * u_driftSpeed * PG_TAU / 10.0;
-  au_hw = 0.02 + 0.14 * u_softness;
-
-  vec2 q = (p - vec2(u_cx, u_cy)) / S;               // blob units, centre at the origin
-  float ang = radians(u_angle);
+// One aura (blob / pair / cluster / rings) at q (blob units). Returns its level (1 core … 0 outline … < 0 outside);
+// acc = satellite gradient weight, wq = the warped coordinates (for the inner swirl).
+float auShape(vec2 q, float ang, out float acc, out vec2 wq) {
   vec2 rad = vec2(u_stretch, 1.0);
   float n = 2.0 + 5.0 * u_squareness;
-  vec2 w = q + u_lumps * 0.32 * auWarp(q);
-  float L;
-  bool rings = false;
-
-  if (u_shape == SHAPE_BLOB) {
-    L = auBall(w, 0.04 * auCirc(1.0, 0.5), rad, n, ang);
-  } else if (u_shape == SHAPE_PAIR) {
+  vec2 w = q + u_lumps * 0.32 * auWarp(q + au_so);
+  wq = w;
+  acc = 0.0;
+  if (u_shape == SHAPE_PAIR) {
     au_mx = -1e9; au_sw = 0.0; au_sa = 0.0; au_k = 0.11;
     auAdd(auBall(w, 0.03 * auCirc(1.0, 0.5), rad, n, ang), 0.0);
     float sa = radians(u_satAngle);
     vec2 c2 = u_satDist * vec2(cos(sa), sin(sa)) + 0.06 * auCirc(1.0, 2.4);
-    auAdd(auBall(w, c2, vec2(u_satSize * (1.0 + 0.04 * sin(au_T + 1.0))), 2.2, 0.0), u_accentMix);
-    L = au_mx + au_k * log(au_sw);
-    au_acc = au_sa / au_sw;
-  } else if (u_shape == SHAPE_CLUSTER) {
+    auAdd(auBall(w, c2, vec2(u_satSize * (1.0 + 0.04 * sin(au_T + au_ph + 1.0))), 2.2, 0.0), u_accentMix);
+    acc = au_sa / au_sw;
+    return au_mx + au_k * log(au_sw);
+  }
+  if (u_shape == SHAPE_CLUSTER) {
     au_mx = -1e9; au_sw = 0.0; au_sa = 0.0; au_k = 0.2;
     int N = int(u_count);
     for (int i = 0; i < 7; i++) {
@@ -243,21 +251,90 @@ vec4 pattern(vec2 p) {
       float r = (i == 0 ? 0.62 : 0.3 + 0.25 * h.y) * (1.0 + 0.06 * sin(au_T + h.z * 6.0));
       auAdd(auBall(w, c, vec2(r), 2.0, 0.0), (i - (i / 2) * 2 == 1) ? u_accentMix : 0.0);
     }
-    L = au_mx + au_k * log(au_sw);
-    au_acc = au_sa / au_sw;
-  } else if (u_shape == SHAPE_FIELD) {
+    acc = au_sa / au_sw;
+    return au_mx + au_k * log(au_sw);
+  }
+  if (u_shape == SHAPE_RINGS) return auBall(w, vec2(0.0), rad, n, ang);
+  return auBall(w, 0.04 * auCirc(1.0, 0.5), rad, n, ang);
+}
+
+vec4 pattern(vec2 p) {
+  // fit the view to the shorter side of the window, so the aura stays whole in tall / narrow windows too
+  p *= max(1.0, u_res.y / u_res.x);
+  float S = u_size;
+  au_T = u_time * u_morph * PG_TAU / 10.0;
+  au_C = u_time * u_driftSpeed * PG_TAU / 10.0;
+  au_hw = 0.02 + 0.14 * u_softness;
+
+  vec2 q = (p - vec2(u_cx, u_cy)) / S;               // blob units, centre at the origin
+  float ang = radians(u_angle);
+  vec2 rad = vec2(u_stretch, 1.0);
+  float n = 2.0 + 5.0 * u_squareness;
+  vec2 w = q, so = vec2(0.0);
+  float L, coff = 0.0;
+  bool rings = u_shape == SHAPE_RINGS;
+
+  if (u_shape == SHAPE_FIELD) {
+    w = q + u_lumps * 0.32 * auWarp(q);
     vec2 m3 = 0.5 * auCirc(1.0, 0.4), m4 = 0.4 * auCirc(-2.0, 2.0);
     vec2 v = q * 0.55 + u_lumps * 0.6 * auWarp(q * 0.5);
     float f = pg_noise(v + vec2(5.3, 1.1) + m3) + 0.45 * pg_noise(v * 2.1 + vec2(8.8, 3.3) + m4);
     L = 0.32 + 0.9 * f;
+  } else if (u_repeat == REPEAT_OFF || u_shape == SHAPE_CLUSTER) {
+    float acc;
+    L = auShape(q, ang, acc, w);
+    au_acc = acc;
   } else {
-    rings = true;
-    L = auBall(w, vec2(0.0), rad, n, ang);           // 1 - normalised radius
+    // Repeat: a grid / brick lattice of auras. Each point blends the four nearest copies (smooth union), so halos melt
+    // together instead of being cut at the tile edges. Cells are sized from the aura's bounding box × Spacing.
+    vec2 ext = vec2(u_stretch, 1.0) * (1.0 + 0.25 * u_lumps);
+    float ca = abs(cos(ang)), sn = abs(sin(ang));
+    vec2 box = vec2(length(vec2(ext.x * ca, ext.y * sn)), length(vec2(ext.x * sn, ext.y * ca)));
+    vec2 bc = vec2(0.0);                               // centre of the composition's bounding box
+    if (u_shape == SHAPE_PAIR) {
+      // the satellite sits on one side: box the blob + satellite together and centre that box in the cell
+      float sa = radians(u_satAngle);
+      vec2 sc = u_satDist * vec2(cos(sa), sin(sa));
+      vec2 lo = min(-box, sc - u_satSize), hi = max(box, sc + u_satSize);
+      bc = 0.5 * (lo + hi);
+      box = 0.5 * (hi - lo);
+    }
+    vec2 cell = 2.0 * box * u_spacing;                 // blob units
+    // Copies across: scale the blob so that 'copies' cells fit across the view's shorter side (2 pattern units)
+    float Sr = 2.0 / max(u_copies, 0.5) / max(cell.x, cell.y);
+    q = (p - vec2(u_cx, u_cy)) / Sr;
+    vec2 g = q / cell;
+    float vr = u_variety;
+    float cmx = -1e9, csw = 0.0, csa = 0.0, csv = 0.0, best = -1e9;
+    float r0 = floor(g.y - 0.5);
+    for (int j = 0; j < 2; j++) {
+      float row = r0 + float(j);
+      float sh = u_repeat == REPEAT_BRICK ? 0.5 * (row - 2.0 * floor(row * 0.5)) : 0.0;
+      float c0 = floor(g.x - sh - 0.5);
+      for (int i = 0; i < 2; i++) {
+        float cx = c0 + float(i);
+        vec3 h = pg_hash32(vec2(cx, row) + vec2(7.0, 19.0));
+        vec2 ctr = vec2(cx + 0.5 + sh, row + 0.5) * cell - bc;
+        au_ph = vr * h.x * PG_TAU;
+        au_so = (h.yz - 0.5) * 40.0 * vr;
+        float sz = 1.0 + vr * 0.3 * (h.z - 0.5);
+        float ac; vec2 lw;
+        float Lc = auShape((q - ctr) / sz, ang + radians(vr * 50.0 * (h.y - 0.5)), ac, lw);
+        if (Lc > cmx) { float r = exp((cmx - Lc) / 0.11); csw *= r; csa *= r; csv *= r; cmx = Lc; }
+        float e = exp((Lc - cmx) / 0.11);
+        csw += e; csa += e * ac; csv += e * (h.x - 0.5);
+        if (Lc > best) { best = Lc; w = lw; so = au_so; }
+      }
+    }
+    au_ph = 0.0; au_so = vec2(0.0);
+    L = cmx + 0.11 * log(csw);
+    au_acc = csa / csw;
+    coff = vr * csv;
   }
 
   // inner swirl: extra cores and hollows, growing with depth
   vec2 m5 = 0.5 * auCirc(1.0, 2.1), m6 = 0.4 * auCirc(-1.0, 4.0);
-  float inn = pg_noise(w * 1.05 + vec2(11.3, 5.9) + m5) + 0.35 * pg_noise(w * 2.3 + vec2(2.9, 13.4) + m6);
+  float inn = pg_noise(w * 1.05 + so + vec2(11.3, 5.9) + m5) + 0.35 * pg_noise(w * 2.3 + so + vec2(2.9, 13.4) + m6);
 
   float x, rate = 1.0;
   if (rings) {
@@ -270,7 +347,7 @@ vec4 pattern(vec2 p) {
     // uneven bands: the gradient advances faster in some places than in others, so a band can be broad on one side
     // and thin out to nothing on the other. Blur, fringe and halo scale with the rate, so they stay even on screen.
     if (u_uneven > 0.0) {
-      float nr = pg_noise(w * 0.8 + vec2(17.1, 2.3) + 0.45 * auCirc(1.0, 3.3));
+      float nr = pg_noise(w * 0.8 + so + vec2(17.1, 2.3) + 0.45 * auCirc(1.0, 3.3));
       rate = exp(u_uneven * 1.3 * nr);
       au_hw *= rate;
     }
@@ -281,7 +358,7 @@ vec4 pattern(vec2 p) {
   }
   // colour drift: a slow, travelling shift through the bands (kept off the outer halo)
   float dn = pg_noise(q * 0.75 + vec2(21.0, 3.0) + 0.8 * vec2(cos(au_C), sin(au_C)));
-  x += u_drift * (0.4 * dn + 0.08 * sin(au_C + 1.0)) * smoothstep(0.03, 0.3, x);
+  x += (u_drift * (0.4 * dn + 0.08 * sin(au_C + 1.0)) + 0.9 * coff) * smoothstep(0.03, 0.3, x);
 
   float s = (0.004 + 0.05 * u_softness) * rate;
   // hue wander: chroma rotated (YIQ, luma kept) by a slow travelling field — halos go magenta ↔ rust, rust ↔ green
